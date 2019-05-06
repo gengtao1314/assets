@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Dao.LogMapper" >
+  <resultMap id="BaseResultMap" type="com.Pojo.Log" >
+    <result column="id" property="id" jdbcType="NUMERIC"/>
+    <result column="create_date" property="createDate" jdbcType="DATE"/>
+    <result column="ip" property="ip" jdbcType="VARCHAR"/>
+    <result column="create_user_id" property="createUserId" jdbcType="VARCHAR"/>
+    <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <sql id="selectSql">
+    <trim prefix="where" prefixOverrides="AND|OR">
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="createUser != null and createUser !=''">
+        AND create_user = #{createUser}
+      </if>
+      <if test="ip != null and ip != ''">
+        AND ip = #{ip}
+      </if>
+    </trim>
+  </sql>
+
+  <!-- 通过指定条件查询信息总数，用于分页展示 -->
+  <select id="countByMap" parameterType="java.util.Map" resultType="int">
+    SELECT count(id) FROM log
+    <include refid="selectSql"/>
+  </select>
+
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM log
+    <include refid="selectSql"/>
+    <if test="start != null">
+      limit #{start},#{length}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="java.util.Map">
+    INSERT INTO log(create_date,create_user,ip,create_user_id) VALUES (#{createDate},#{createUser},#{ip},#{createUserId})
+  </insert>
+</mapper>

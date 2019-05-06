@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Dao.CustomerDao">
+    <!--SQL片段  -->
+    <sql id="selectCustomerListWhere">
+        <where>
+            <if test="name != null">
+                name like "%"#{name}"%"
+            </if>
+            <if test="source != null">
+                and source = #{source}
+            </if>
+            <if test="industry != null">
+                and industry = #{industry}
+            </if>
+            <if test="level != null">
+                and level = #{level}
+            </if>
+        </where>
+    </sql>
+    <!-- 查询客户列表  -->
+    <select id="selectCustomerList" parameterType="com.Pojo.Customer"
+            resultType="com.Pojo.Customer">
+
+        SELECT
+        a.id,
+        a.name,
+        a.user_id,
+        a.create_id,
+        b.item_name source,
+        c.item_name industry,
+        linkman,
+        phone,
+        mobile,
+        createtime
+        FROM
+        user_customer a
+        LEFT JOIN (
+        SELECT
+        id,
+        item_name
+        FROM
+        basedict
+        WHERE
+        type_code = '002'
+        ) b ON a.source = b.id
+        LEFT JOIN (
+        SELECT
+        id,
+        item_name
+        FROM
+        basedict
+        WHERE
+        type_code = '001'
+        ) c ON a.industry = c.id
+        LEFT JOIN (
+        SELECT
+        id,
+        item_name
+        FROM
+        basedict
+        WHERE
+        type_code = '006'
+        ) d ON a.level = d.id
+        <include refid="selectCustomerListWhere"/>
+        <!-- 执行分页查询 -->
+        <if test="start !=null and rows != null">
+            limit #{start},#{rows}
+        </if>
+    </select>
+    <!-- 查询客户总数 -->
+    <select id="selectCustomerListCount" parameterType="com.Pojo.Customer"
+            resultType="Integer">
+        select count(*) from user_customer
+        <include refid="selectCustomerListWhere"/>
+    </select>
+
+    <!-- 添加客户 -->
+    <insert id="createCustomer" parameterType="com.Pojo.Customer">
+	    insert into user_customer(
+	                     name,
+	                     user_id,
+	                     create_id,
+	                     source,
+	                     industry,
+	                     level,
+	                     linkman,
+	                     phone,
+	                     mobile,
+	                     zipcode,
+	                     address,
+	                     createtime
+	             )
+	             values(#{name},
+	                    #{user_id},
+	                    #{create_id},
+	                    #{source},
+	                    #{industry},
+	                    #{level},
+	                    #{linkman},
+	                    #{phone},
+	                    #{mobile},
+	                    #{zipcode},
+	                    #{address},
+	                    #{createtime}
+	            )
+	</insert>
+    <!-- 根据id获取客户信息 -->
+    <select id="getCustomerById" parameterType="Integer"
+            resultType="com.Pojo.Customer">
+	    select * from user_customer where id = #{id}
+	</select>
+    <!-- 更新客户 -->
+    <update id="updateCustomer" parameterType="com.Pojo.Customer">
+        update user_customer
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="user_id!=null">
+                user_id=#{user_id},
+            </if>
+            <if test="create_id!=null">
+                create_id=#{create_id},
+            </if>
+            <if test="source!=null">
+                source=#{source},
+            </if>
+            <if test="industry!=null">
+                industry=#{industry},
+            </if>
+            <if test="level!=null">
+                level=#{level},
+            </if>
+            <if test="linkman!=null">
+                linkman=#{linkman},
+            </if>
+            <if test="phone!=null">
+                phone=#{phone},
+            </if>
+            <if test="mobile!=null">
+                mobile=#{mobile},
+            </if>
+            <if test="zipcode!=null">
+                zipcode=#{zipcode},
+            </if>
+            <if test="address!=null">
+                address=#{address},
+            </if>
+            <if test="createtime!=null">
+                createtime=#{createtime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <!-- 删除客户 -->
+    <delete id="deleteCustomer" parameterType="Integer">
+	    delete from user_customer where id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Dao.StudentMapper" >
+  <resultMap id="BaseResultMap" type="com.Pojo.Student" >
+    <result column="id" property="id" jdbcType="NUMERIC"/>
+    <result column="birthday" property="birthday" jdbcType="DATE"/>
+    <result column="admission_time" property="admissionTime" jdbcType="DATE"/>
+    <result column="employment_id" property="employmentId" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="major" property="major" jdbcType="VARCHAR"/>
+    <result column="be_deleted" property="beDeleted" jdbcType="BOOLEAN"/>
+  </resultMap>
+  <sql id="selectSql">
+    <trim prefix="where" prefixOverrides="AND|OR">
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="birthday != null">
+        AND birthday = #{birthday}
+      </if>
+      <if test="admissionTime != null">
+        AND admission_time = #{admissionTime}
+      </if>
+      <if test="employmentId != null">
+        AND employment_id = #{employmentId}
+      </if>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+      <if test="major != null">
+        AND major = #{major}
+      </if>
+      <if test="beDeleted != null">
+        AND be_deleted = #{beDeleted}
+      </if>
+    </trim>
+  </sql>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    <foreach collection="list" item="i" separator=";">
+      insert into student
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          id,
+        </if>
+        <if test="i.birthday != null">
+          birthday,
+        </if>
+        <if test="i.admissionTime != null">
+          admission_time,
+        </if>
+        <if test="i.employmentId != null and i.employmentId != ''">
+          employment_id,
+        </if>
+        <if test="i.name != null and i.name != ''">
+          name,
+        </if>
+        <if test="i.major != null and i.major != ''">
+          major,
+        </if>
+        <if test="i.beDeleted != null">
+          be_deleted,
+        </if>
+      </trim>
+
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          #{i.id},
+        </if>
+        <if test="i.birthday != null">
+          #{i.birthday},
+        </if>
+        <if test="i.admissionTime != null">
+          #{i.admissionTime},
+        </if>
+        <if test="i.employmentId != null and i.employmentId != ''">
+          #{i.employmentId},
+        </if>
+        <if test="i.name != null and i.name != ''">
+          #{i.name},
+        </if>
+        <if test="i.major != null and i.major != ''">
+          #{i.major},
+        </if>
+        <if test="i.beDeleted != null">
+          #{i.beDeleted},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+
+
+  <!-- 修改 -->
+  <update id="batchUpdate" parameterType="com.Pojo.Student">
+    <foreach collection="list" item="i" separator=";">
+      UPDATE student
+      <trim prefix="set" suffixOverrides=",">
+        <if test="i.birthday != null">
+          birthday = #{i.birthday},
+        </if>
+        <if test="i.admissionTime != null">
+          admission_time = #{i.admissionTime},
+        </if>
+        <if test="i.employmentId != null and i.employmentId != ''">
+          employment_id = #{i.employmentId},
+        </if>
+        <if test="i.name != null and i.name != ''">
+          name = #{i.name},
+        </if>
+        <if test="i.major != null and i.major != ''">
+          major = #{i.major},
+        </if>
+        <if test="i.beDeleted != null">
+          be_deleted = #{i.beDeleted},
+        </if>
+      </trim>
+      <trim prefix="where" prefixOverrides="AND|OR">
+        <if test="i.id != null">
+          AND id = #{i.id}
+        </if>
+      </trim>
+    </foreach>
+  </update>
+
+  <!-- 通过指定条件查询信息总数，用于分页展示 -->
+  <select id="countByMap" parameterType="java.util.Map" resultType="int">
+    SELECT count(id) FROM student
+    <include refid="selectSql"/>
+  </select>
+
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM student
+    <include refid="selectSql"/>
+    <if test="start != null">
+      limit #{start},#{length}
+    </if>
+  </select>
+  <delete id="deleteByMap" parameterType="java.util.Map">
+    DELETE FROM student
+    <include refid="selectSql"/>
+  </delete>
+</mapper>

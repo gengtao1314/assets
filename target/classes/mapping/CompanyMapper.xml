@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Dao.CompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.Pojo.Company" >
+    <result column="id" property="id" jdbcType="NUMERIC"/>
+    <result column="industry" property="industry" jdbcType="VARCHAR"/>
+    <result column="location" property="location" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="scale" property="scale" jdbcType="VARCHAR"/>
+    <result column="is_deleted" property="isDeleted" jdbcType="BOOLEAN"/>
+  </resultMap>
+
+  <sql id="selectSql">
+    <trim prefix="where" prefixOverrides="AND|OR">
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="industry != null">
+        AND industry = #{industry}
+      </if>
+      <if test="location != null">
+        AND location = #{location}
+      </if>
+      <if test="name != null">
+        AND name = #{name}
+      </if>
+      <if test="scale != null">
+        AND scale = #{scale}
+      </if>
+      <if test="isDeleted != null">
+        AND is_deleted = #{isDeleted}
+      </if>
+    </trim>
+  </sql>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    <foreach collection="list" item="i" separator=";">
+      insert into company
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          id,
+        </if>
+        <if test="i.industry != null and i.industry != ''">
+          industry,
+        </if>
+        <if test="i.location != null and i.location != ''">
+          location,
+        </if>
+        <if test="i.name != null and i.name != ''">
+          name,
+        </if>
+        <if test="i.scale != null and i.scale != ''">
+          scale,
+        </if>
+        <if test="i.isDeleted != null">
+          is_deleted,
+        </if>
+      </trim>
+
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          #{i.id},
+        </if>
+        <if test="i.industry != null and i.industry != ''">
+          #{i.industry},
+        </if>
+        <if test="i.location != null and i.location != ''">
+          #{i.location},
+        </if>
+        <if test="i.name != null and i.name != ''">
+          #{i.name},
+        </if>
+        <if test="i.scale != null and i.scale != ''">
+          #{i.scale},
+        </if>
+        <if test="i.isDeleted != null">
+          #{i.isDeleted},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+
+
+  <!-- 修改 -->
+  <update id="batchUpdate" parameterType="com.Pojo.Company">
+    <foreach collection="list" item="i" separator=";">
+      UPDATE company
+      <trim prefix="set" suffixOverrides=",">
+        <if test="i.industry != null and i.industry != ''">
+          industry = #{i.industry},
+        </if>
+        <if test="i.location != null and i.location != ''">
+          location = #{i.location},
+        </if>
+        <if test="i.name != null and i.name != ''">
+          name = #{i.name},
+        </if>
+        <if test="i.scale != null and i.scale != ''">
+          scale = #{i.scale},
+        </if>
+        <if test="i.isDeleted != null">
+          is_deleted = #{i.isDeleted},
+        </if>
+      </trim>
+      <trim prefix="where" prefixOverrides="AND|OR">
+        <if test="i.id != null">
+          AND id = #{i.id}
+        </if>
+      </trim>
+    </foreach>
+  </update>
+
+  <!-- 通过指定条件查询信息总数，用于分页展示 -->
+  <select id="countByMap" parameterType="java.util.Map" resultType="int">
+    SELECT count(id) FROM company
+    <include refid="selectSql"/>
+  </select>
+
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM company
+    <include refid="selectSql"/>
+    <if test="start != null">
+      limit #{start},#{length}
+    </if>
+  </select>
+  <delete id="deleteByMap" parameterType="java.util.Map">
+    DELETE FROM company
+    <include refid="selectSql"/>
+  </delete>
+</mapper>

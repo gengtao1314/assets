@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Dao.UserDao" >
+    <resultMap id="BaseResultMap" type="com.Pojo.User" >
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createtime" jdbcType="DATE"/>
+    </resultMap>
+    <sql id="selectSql">
+        <trim prefix="where" prefixOverrides="AND|OR">
+            <if test="id != null and id !=0">
+                AND id = #{id}
+            </if>
+            <if test="username != null">
+                AND username = #{username}
+            </if>
+            <if test="password != null">
+                AND password = #{password}
+            </if>
+            <if test="name != null">
+                AND name = #{name}
+            </if>
+            <if test="state != null">
+                AND state = #{state}
+            </if>
+            <if test="createtime != null">
+                AND createtime = #{createtime}
+            </if>
+        </trim>
+    </sql>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        <foreach collection="list" item="i" separator=";">
+            insert into user
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="i.id != null and i.id !=0">
+                    id,
+                </if>
+                <if test="i.username != null">
+                    username,
+                </if>
+                <if test="i.password != null">
+                    password,
+                </if>
+                <if test="i.name != null and i.name != ''">
+                    name,
+                </if>
+                <if test="i.state != null and i.state != ''">
+                    state,
+                </if>
+                <if test="i.createtime != null">
+                    createtime,
+                </if>
+            </trim>
+
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="i.id != null and i.id != 0">
+                    #{i.id},
+                </if>
+                <if test="i.username != null">
+                    #{i.username},
+                </if>
+                <if test="i.password != null">
+                    #{i.password},
+                </if>
+                <if test="i.name != null and i.name != ''">
+                    #{i.name},
+                </if>
+                <if test="i.state != null and i.state != ''">
+                    #{i.state},
+                </if>
+                <if test="i.createtime != null">
+                    #{i.createtime},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+
+
+    <!-- 修改 -->
+    <update id="batchUpdate" parameterType="com.Pojo.User">
+        <foreach collection="list" item="i" separator=";">
+            UPDATE user
+            <trim prefix="set" suffixOverrides=",">
+                <if test="i.username != null and i.username != ''">
+                    username = #{i.username},
+                </if>
+                <if test="i.password != null and i.password !=''">
+                    password = #{i.password},
+                </if>
+                <if test="i.name != null and i.name != ''">
+                    name = #{i.name},
+                </if>
+                <if test="i.state != null and i.state != ''">
+                    state = #{i.state},
+                </if>
+                <if test="i.createtime != null">
+                    createtime = #{i.createtime},
+                </if>
+            </trim>
+            <trim prefix="where" prefixOverrides="AND|OR">
+                <if test="i.id != null">
+                    AND id = #{i.id}
+                </if>
+            </trim>
+        </foreach>
+    </update>
+
+    <!-- 通过指定条件查询信息总数，用于分页展示 -->
+    <select id="countByMap" parameterType="java.util.Map" resultType="int">
+        SELECT count(id) FROM user
+        <include refid="selectSql"/>
+    </select>
+
+
+    <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT * FROM user
+        <include refid="selectSql"/>
+        <if test="start != null">
+            limit #{start},#{length}
+        </if>
+    </select>
+    <delete id="deleteByMap" parameterType="java.util.Map">
+        DELETE FROM user
+        <include refid="selectSql"/>
+    </delete>
+</mapper>

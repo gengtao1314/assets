@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Dao.EmploymentMapper" >
+  <resultMap id="BaseResultMap" type="com.Pojo.Employment" >
+    <result column="id" property="id" jdbcType="NUMERIC"/>
+    <result column="entry_time" property="entryTime" jdbcType="DATE"/>
+    <result column="job_position" property="jobPosition" jdbcType="DATE"/>
+    <result column="salary" property="salary" jdbcType="VARCHAR"/>
+    <result column="company_id" property="companyId" jdbcType="VARCHAR"/>
+    <result column="student_id" property="studentId" jdbcType="VARCHAR"/>
+    <result column="company" property="company" jdbcType="BOOLEAN"/>
+    <result column="student" property="student" jdbcType="BOOLEAN"/>
+  </resultMap>
+  <sql id="selectSql">
+    <trim prefix="where" prefixOverrides="AND|OR">
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="entryTime != null">
+        AND entry_time = #{entryTime}
+      </if>
+      <if test="jobPosition != null">
+        AND job_position = #{jobPosition}
+      </if>
+      <if test="salary != null and salary != ''">
+        AND salary = #{salary}
+      </if>
+      <if test="company_id != null and company_id != ''">
+        AND company_id = #{companyId}
+      </if>
+      <if test="major != null and student_id != ''">
+        AND student_id = #{studentId}
+      </if>
+      <if test="company != null">
+        AND company = #{company}
+      </if>
+      <if test="student != null">
+        AND student = #{student}
+      </if>
+    </trim>
+  </sql>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    <foreach collection="list" item="i" separator=";">
+      insert into employment
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          id,
+        </if>
+        <if test="i.entryTime != null">
+          entry_time,
+        </if>
+        <if test="i.jobPosition != null">
+          job_position,
+        </if>
+        <if test="i.salary != null and i.salary != ''">
+          salary,
+        </if>
+        <if test="i.company_id != null and i.company_id != ''">
+          company_id,
+        </if>
+        <if test="i.major != null and i.student_id != ''">
+          student_id,
+        </if>
+        <if test="i.company != null">
+          company,
+        </if>
+        <if test="i.student != null">
+          student,
+        </if>
+      </trim>
+
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="i.id != null and i.id != ''">
+          #{i.id},
+        </if>
+        <if test="i.entryTime != null">
+          #{i.entryTime},
+        </if>
+        <if test="i.jobPosition != null">
+          #{i.jobPosition},
+        </if>
+        <if test="i.salary != null and i.salary != ''">
+          #{i.salary},
+        </if>
+        <if test="i.company_id != null and i.company_id != ''">
+          #{i.companyId},
+        </if>
+        <if test="i.major != null and i.student_id != ''">
+          #{i.studentId},
+        </if>
+        <if test="i.company != null">
+          #{i.company},
+        </if>
+        <if test="i.student != null">
+           #{i.student},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+
+
+  <!-- 修改 -->
+  <update id="batchUpdate" parameterType="com.Pojo.Employment">
+    <foreach collection="list" item="i" separator=";">
+      UPDATE employment
+      <trim prefix="set" suffixOverrides=",">
+        <if test="i.entryTime != null">
+          entry_time = #{i.entryTime},
+        </if>
+        <if test="i.jobPosition != null">
+          job_position = #{i.jobPosition},
+        </if>
+        <if test="i.salary != null and i.salary != ''">
+          salary = #{i.salary},
+        </if>
+        <if test="i.company_id != null and i.company_id != ''">
+          company_id = #{i.companyId},
+        </if>
+        <if test="i.major != null and i.student_id != ''">
+          student_id = #{i.studentId},
+        </if>
+        <if test="i.company != null">
+          company = #{i.company},
+        </if>
+        <if test="i.student != null">
+          student = #{i.student},
+        </if>
+      </trim>
+      <trim prefix="where" prefixOverrides="AND|OR">
+        <if test="i.id != null">
+          AND id = #{i.id}
+        </if>
+      </trim>
+    </foreach>
+  </update>
+
+  <!-- 通过指定条件查询信息总数，用于分页展示 -->
+  <select id="countByMap" parameterType="java.util.Map" resultType="int">
+    SELECT count(id) FROM employment
+    <include refid="selectSql"/>
+  </select>
+
+
+  <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM employment
+    <include refid="selectSql"/>
+    <if test="start != null">
+      limit #{start},#{length}
+    </if>
+  </select>
+  <delete id="deleteByMap" parameterType="java.util.Map">
+    DELETE FROM employment
+    <include refid="selectSql"/>
+  </delete>
+</mapper>
