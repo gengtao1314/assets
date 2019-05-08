@@ -4,7 +4,8 @@
 <mapper namespace="com.Dao.TestDao" >
     <resultMap id="baseResultMap" type="com.Pojo.Test" >
         <result column="id" property="id" jdbcType="NUMERIC"/>
-        <result column="test" property="test" jdbcType="DATE"/>
+        <result column="test" property="test" jdbcType="VARCHAR"/>
+        <result column="test_status" property="testStatus" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="selectSql">
